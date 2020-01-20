@@ -1,0 +1,6 @@
+Sclera - OpenNLP Connector
+Copyright 2012 - 2020 Sclera, Inc.
+ 
+This product uses the following third-party components:
+
+Apache OpenNLP - Apache License v2.0 - https://www.apache.org/licenses/LICENSE-2.0
