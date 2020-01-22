@@ -4,6 +4,8 @@ description := "Add-on that enables Sclera to perform text-processing using the 
 
 version := "4.0-SNAPSHOT"
 
+homepage := Some(url("https://github.com/scleradb/sclera-plugin-opennlp"))
+
 organization := "com.scleradb"
 
 organizationName := "Sclera, Inc."
