@@ -21,7 +21,8 @@ licenses := Seq("Apache License version 2.0" -> url("https://www.apache.org/lice
 libraryDependencies ++= Seq(
     "org.apache.opennlp" % "opennlp-tools" % "1.9.1",
     "com.scleradb" %% "sclera-config" % "4.0-SNAPSHOT" % "provided",
-    "com.scleradb" %% "sclera-core" % "4.0-SNAPSHOT" % "provided"
+    "com.scleradb" %% "sclera-core" % "4.0-SNAPSHOT" % "provided",
+    "org.scalatest" %% "scalatest" % "3.1.0" % "test"
 )
 
 scalacOptions ++= Seq(
@@ -29,3 +30,5 @@ scalacOptions ++= Seq(
 )
 
 exportJars := true
+
+fork in Test := true
