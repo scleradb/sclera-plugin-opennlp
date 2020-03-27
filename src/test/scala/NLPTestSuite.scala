@@ -54,7 +54,13 @@ class NLPTestSuite extends AnyFunSpec with CancelAfterFailure {
 
     describe("NLP Query Processing") {
         it("should setup") {
-            processor = Processor(checkSchema = false)
+            processor = Processor(
+                schemaDbms = "H2MEM",
+                schemaDb = "scleratests",
+                tempDb ="scleratests",
+                checkSchema = false
+            )
+
             try processor.init() catch { case (_: java.sql.SQLWarning) =>
                 processor.schema.createSchema()
             }
