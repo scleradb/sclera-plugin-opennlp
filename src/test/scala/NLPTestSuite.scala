@@ -17,6 +17,12 @@
 
 package com.scleradb.plugin.analytics.nlp.opennlp.test
 
+import sys.process._
+import java.net.URL
+import java.io.File
+
+import scala.language.postfixOps
+
 import org.scalatest.CancelAfterFailure
 import org.scalatest.funspec.AnyFunSpec
 
@@ -25,8 +31,26 @@ import com.scleradb.exec.Processor
 import com.scleradb.sql.datatypes.Column
 import com.scleradb.sql.result.TableRow
 
+import com.scleradb.plugin.analytics.nlp.opennlp.extractor.eval.OpenNlpExtractor
+
 class NLPTestSuite extends AnyFunSpec with CancelAfterFailure {
     var processor: Processor = null
+    val modelHome: File = OpenNlpExtractor.modelHome
+
+    def download(urlStr: String, file: File): Unit = (new URL(urlStr)) #> file !
+
+    def downloadModel(modelFileName: String): Unit = {
+        val modelFile: File = new File(modelHome, modelFileName)
+        println(modelFile.getCanonicalPath)
+
+        if( !modelFile.exists ) {
+            modelHome.mkdirs()
+            download(
+                s"http://opennlp.sourceforge.net/models-1.5/$modelFileName",
+                modelFile
+            )
+        }
+    }
 
     describe("NLP Query Processing") {
         it("should setup") {
@@ -34,6 +58,12 @@ class NLPTestSuite extends AnyFunSpec with CancelAfterFailure {
             try processor.init() catch { case (_: java.sql.SQLWarning) =>
                 processor.schema.createSchema()
             }
+        }
+
+        it("should download models") {
+            downloadModel("en-ner-person.bin")
+            downloadModel("en-ner-location.bin")
+            downloadModel("en-sent.bin")
         }
 
         it("should execute an NLP query") {
