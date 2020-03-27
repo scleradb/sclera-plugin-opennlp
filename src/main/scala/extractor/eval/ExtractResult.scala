@@ -43,8 +43,7 @@ class ExtractResult(
         Column(labelCol.name, SqlCharVarying(None))::
         rs.columns
 
-    private val openNlpExtractor: OpenNlpExtractor =
-        new OpenNlpExtractor(langOpt)
+    private val openNlpExtractor: OpenNlpExtractor = OpenNlpExtractor(langOpt)
     
     override def rows: Iterator[ExtendedTableRow] = rs.typedRows.flatMap { t =>
         val text: String = t.getStringOpt(inputCol.name) getOrElse {
@@ -66,4 +65,15 @@ class ExtractResult(
     override val resultOrder: List[SortExpr] = rs.resultOrder
 
     override def close(): Unit = { }
+}
+
+/** Companion object */
+object ExtractResult {
+    /** Constructor */
+    def apply(
+        langOpt: Option[String], extractorIds: List[String],
+        inputCol: ColRef, entityCol: ColRef, labelCol: ColRef, rs: TableResult
+    ): ExtractResult = new ExtractResult(
+        langOpt, extractorIds, inputCol, entityCol, labelCol, rs
+    )
 }

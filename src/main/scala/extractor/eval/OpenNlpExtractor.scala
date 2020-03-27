@@ -26,24 +26,18 @@ import opennlp.tools.tokenize.{Tokenizer, SimpleTokenizer}
 
 import com.scleradb.config.ScleraConfig
 
-/** Named Entity Extractor based on Apache OpenNLP */
-class OpenNlpExtractor(langOpt: Option[String]) {
-    /** Language. Taken to be English, if not specified */
-    private val lang: String = langOpt.getOrElse("en").toLowerCase
-
+/** Named Entity Extractor based on Apache OpenNLP
+  * @param lang Language code
+  */
+class OpenNlpExtractor(lang: String) {
     /** Named entity */
     class Entity(
         val entityType: String, val start: Int, val end: Int, val text: String
     )
 
-    /** Location of the models */
-    private val modelHome: File =
-        new File(ScleraConfig.serviceAssetDir, "opennlp")
-    modelHome.mkdirs()
-
     /** Named entity finder, based on pre-build models */
     private def finder(id: String): NameFinderME = {
-        val modelf: File = modelFile(
+        val modelf: File = OpenNlpExtractor.modelFile(
             s"$lang-ner-${id.toLowerCase}.bin", "the model for \"" + id + "\""
         )
 
@@ -59,7 +53,7 @@ class OpenNlpExtractor(langOpt: Option[String]) {
 
     /** Sentence detector, based on pre-build models */
     private lazy val sentenceDetector: SentenceDetectorME = {
-        val modelf: File = modelFile(
+        val modelf: File = OpenNlpExtractor.modelFile(
             s"$lang-sent.bin", "the sentence detector model"
         )
 
@@ -88,10 +82,7 @@ class OpenNlpExtractor(langOpt: Option[String]) {
       * @param text Input text
       * @return List of extracted entities
       */
-    def extract(
-        finderIds: List[String],
-        text: String
-    ): List[Entity] = {
+    def extract(finderIds: List[String], text: String): List[Entity] = {
         val finders: List[NameFinderME] = finderIds.map(finder)
 
         sentences(text).toList.flatMap { sentence =>
@@ -107,10 +98,29 @@ class OpenNlpExtractor(langOpt: Option[String]) {
             }
         }
     }
+}
 
-    private def modelFile(modelFileName: String, modelDesc: String): File = {
+/** Companion object */
+object OpenNlpExtractor {
+    /** Constructor
+     *  @param langOpt Language code, defaults to "en" (English) if unspecified
+     */
+    def apply(langOpt: Option[String]): OpenNlpExtractor = {
+        val lang: String = langOpt.getOrElse("en").toLowerCase
+        new OpenNlpExtractor(lang)
+    }
+
+    /** Location of the models */
+    val modelHome: File = new File(ScleraConfig.serviceAssetDir, "opennlp")
+
+    /** Model file
+     *  @param modelFileName Name of the model file
+     *  @param modelDesc Description of the model (for use in error message)
+     */
+    def modelFile(modelFileName: String, modelDesc: String): File = {
         val file: File = new File(modelHome, modelFileName)
         if( !file.exists ) {
+            modelHome.mkdirs()
             throw new IllegalArgumentException(
                 "Could not find " + modelDesc + ".\n" +
                 "Please download the model " + "(check " +

@@ -67,7 +67,7 @@ case class Extract(
 
     override val resultCols: List[ColRef] = List(entityCol, labelCol)
 
-    override def eval(rs: TableResult): ExtractResult = new ExtractResult(
+    override def eval(rs: TableResult): ExtractResult = ExtractResult(
         langOpt, extractorIds, inputCol, entityCol, labelCol, rs
     )
 }
