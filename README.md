@@ -1,5 +1,7 @@
 # Sclera - OpenNLP Connector
 
+[![Build Status](https://travis-ci.org/scleradb/sclera-plugin-opennlp.svg?branch=master)](https://travis-ci.org/scleradb/sclera-plugin-opennlp)
+
 Enables Sclera to perform text analytics on free-form text.
 
 Current version of this component only supports extracting entities (such as names of persons and places, dates, emails) from the text. Later versions will include additional features such as sentiment/opinion mining.
